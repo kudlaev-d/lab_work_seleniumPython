@@ -1,18 +1,13 @@
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from typing import List
+from pageobjects.base_page import BasePage
 
 
-class ProductPage:
+class ProductPage(BasePage):
 
-    url: str = 'http://tutorialsninja.com/demo/index.php?route=product/product&product_id=42'
-
-    def __init__(self, driver: WebDriver):
-        self.driver = driver
-
-    def open(self):
-        self.driver.get(self.url)
+    def get_url(self) -> str:
+        return'http://tutorialsninja.com/demo/index.php?route=product/product&product_id=42'
 
     def get_headers(self) -> List[str]:
         headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')

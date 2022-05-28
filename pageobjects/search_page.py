@@ -34,6 +34,12 @@ class SearchPage(BasePage):
         """Метод получения кнопки глобального поиска"""
         return self.driver.find_element(By.CLASS_NAME, 'input-group-btn')
 
+    def get_notification(self) -> str:
+        return self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/p[2]').text
+
+    def clean_search_field(self):
+        self.get_search_field().clear()
+
     def input_search_criteria_keywords(self, keywords: str):
         self.get_search_criteria_field().send_keys(keywords)
 
@@ -45,11 +51,12 @@ class SearchPage(BasePage):
         self.get_search_field().send_keys(name)
         self.get_button_global_search().click()
 
-    def get_price_from_str(self, price_str: str) -> Decimal:
-        # $1,202.00
-        # Ex Tax: $1,000.00
-        split_by_line: List[str] = price_str.split('\n')
-
+    def get_decimal_price_from_str(self, price_str: str) -> Decimal:
+        """Метод извлечения цены и перевода в decimal"""
+        split_by_lines: List[str] = price_str.split('\n')
+        first_price: List[str] = split_by_lines[0].split(' ')
+        price_wo_symbols: str = first_price[0][1:].replace(',', '')
+        return Decimal(price_wo_symbols)
 
     def get_search_results(self) -> List[ProductInfo]:
         """Возвращает список найденных моделей"""
@@ -62,6 +69,8 @@ class SearchPage(BasePage):
                 price: str = self.driver.find_element(By.CLASS_NAME, 'price-new').text
             except NoSuchElementException:
                 price: str = self.driver.find_element(By.CLASS_NAME, 'price').text
-            print(price)
+
+            product = ProductInfo(name=name, price=self.get_decimal_price_from_str(price))
+            products.append(product)
 
         return products

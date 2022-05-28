@@ -12,7 +12,6 @@ class ProductInfo:
     name: str
     price: Decimal
 
-
 class SearchPage(BasePage):
 
     def get_url(self) -> str:

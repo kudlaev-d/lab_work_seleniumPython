@@ -1,5 +1,7 @@
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from typing import List
 from pageobjects.base_page import BasePage
 from string import ascii_letters
@@ -14,13 +16,21 @@ class ProductPage(BasePage):
         return self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Reviews')
 
     def get_alert_text(self) -> str:
-        return self.driver.find_element(By.CLASS_NAME, 'alert-dismissible').text
+        alert: WebElement = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'alert-dismissible')))
+        return alert.text
 
     def get_name_field(self) -> WebElement:
         return self.driver.find_element(By.ID, 'input-name')
 
     def get_review_field(self) -> WebElement:
         return self.driver.find_element(By.ID, 'input-review')
+
+    def get_rating_values(self) -> List[WebElement]:
+        rating_values: List[WebElement] = self.driver.find_elements(By.NAME, 'rating')
+        return rating_values
+
+    def get_continue_button(self) -> WebElement:
+        return self.driver.find_element(By.ID, 'button-review')
 
     def get_headers(self) -> List[str]:
         headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')
@@ -43,13 +53,20 @@ class ProductPage(BasePage):
         self.get_name_field().send_keys(name)
 
     def input_review(self, review: str):
-        self.get_name_field().send_keys(review)
+        self.get_review_field().send_keys(review)
 
-    def generate_random_string(self, length) -> str:
+    @classmethod
+    def generate_random_string(cls, length) -> str:
         """Метод генерации случайной строки заданной длины"""
         letters = ascii_letters + ' '
         rand_string: str = ''.join(choice(letters) for i in range(length))
         return rand_string
 
+    def select_rating_value(self, value: int):
+        self.get_rating_values()[value].click()
 
+    def send_review(self):
+        self.get_continue_button().click()
 
+    def clear_review_field(self):
+        self.get_review_field().clear()

@@ -71,14 +71,14 @@ class SearchPage(BasePage):
     def get_search_results(self) -> List[ProductInfo]:
         """Возвращает список найденных моделей"""
         products: List[ProductInfo] = []
-        results_tags: List[WebElement] = self.driver.find_elements(By.CLASS_NAME, 'product-layout')
+        results: List[WebElement] = self.driver.find_elements(By.CLASS_NAME, 'product-layout')
 
-        for result_tag in results_tags:
-            name: str = self.driver.find_element(By.TAG_NAME, 'h4').text
+        for result in results:
+            name: str = result.find_element(By.TAG_NAME, 'h4').text
             try:
-                price: str = self.driver.find_element(By.CLASS_NAME, 'price-new').text
+                price: str = result.find_element(By.CLASS_NAME, 'price-new').text
             except NoSuchElementException:
-                price: str = self.driver.find_element(By.CLASS_NAME, 'price').text
+                price: str = result.find_element(By.CLASS_NAME, 'price').text
 
             product = ProductInfo(name=name, price=self.get_decimal_price_from_str(price))
             products.append(product)

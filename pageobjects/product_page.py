@@ -85,5 +85,5 @@ class ProductPage(BasePage):
     def clear_review_field(self):
         self.get_review_field().clear()
 
-    def compare_product(self):
+    def add_to_compare(self):
         self.get_compare_button().click()

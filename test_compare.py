@@ -28,24 +28,23 @@ class CompareTest(unittest.TestCase):
 
         # Открываем страницу продукта Apple Cinema и добавляем его к сравнению
         self.apple_product_page.open()
-        self.apple_product_page.compare_product()
+        self.apple_product_page.add_to_compare()
 
         # Продукт успешно добавился?
         self.assertTrue(self.apple_product_page.is_successfully_added_to_comparison())
 
         # Открываем страницу продукта Samsung и добавить его к сравнению
         self.samsung_product_page.open()
-        self.samsung_product_page.compare_product()
+        self.samsung_product_page.add_to_compare()
 
         # Переходим на страницу с таблицей сравнения
-        self.comparison_page.product_comparison()
+        self.comparison_page.open_product_comparison()
 
         # На странице присутствуют добавленные раннее продукты
         self.assertTrue(self.comparison_page.is_products_presence(self.comparable_products))
 
-        # Удалить оба товара из сравнения
-        self.comparison_page.remove_comparable_product()
-        self.comparison_page.remove_comparable_product()
+        # Удалить все товары из сравнения
+        self.comparison_page.remove_all_comparable_products(len(self.comparable_products))
 
         # Страница сравнения пуста?
         self.assertTrue(self.comparison_page.is_page_empty())

@@ -10,7 +10,7 @@ from random import randrange
 class AddReviewTest(unittest.TestCase):
 
     MAX_RATING: Final = 5
-    apple_cinema_id: str = '42'
+    APPLE_CINEMA_ID: Final = '42'
 
     def setUp(self) -> None:
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
@@ -27,7 +27,7 @@ class AddReviewTest(unittest.TestCase):
     def test_add_review(self):
         """Тест добавления отзыва о товаре"""
 
-        self.apple_page = ProductPage(driver=self.driver, page_id=AddReviewTest.apple_cinema_id)
+        self.apple_page = ProductPage(driver=self.driver, page_id=AddReviewTest.APPLE_CINEMA_ID)
         self.apple_page.open()
 
         # Открыть вкладку review, не заполняя поля кликнуть Continue

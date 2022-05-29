@@ -8,13 +8,14 @@ class ProductPageTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.product_id: str = '42'
 
     def tearDown(self) -> None:
         self.driver.close()
 
     def test_productAvailable(self):
         """Тест, что присутствует информация о продукте"""
-        product_page = ProductPage(self.driver)
+        product_page = ProductPage(self.driver, self.product_id)
         product_page.open()
         product: str = 'Apple Cinema 30"'
 

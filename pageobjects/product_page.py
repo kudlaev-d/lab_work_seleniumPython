@@ -1,5 +1,6 @@
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from typing import List
@@ -8,16 +9,16 @@ from string import ascii_letters
 from random import choice
 
 class ProductPage(BasePage):
+    def __init__(self, driver: WebDriver, page_id: str):
+        BasePage.__init__(self, driver)
+        self.page_id = page_id
+        self.wait = WebDriverWait(self.driver, 5)
 
     def get_url(self) -> str:
-        return'http://tutorialsninja.com/demo/index.php?route=product/product&product_id=42'
+        return f'http://tutorialsninja.com/demo/index.php?route=product/product&product_id={self.page_id}'
 
     def get_review_tab(self) -> WebElement:
         return self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Reviews')
-
-    def is_presence_alert_text(self, text: str) -> bool:
-        alert: bool = WebDriverWait(self.driver, 5).until(EC.text_to_be_present_in_element((By.CLASS_NAME, 'alert-dismissible'), text))
-        return alert
 
     def get_name_field(self) -> WebElement:
         return self.driver.find_element(By.ID, 'input-name')
@@ -31,6 +32,9 @@ class ProductPage(BasePage):
 
     def get_continue_button(self) -> WebElement:
         return self.driver.find_element(By.ID, 'button-review')
+
+    def get_compare_button(self) -> WebElement:
+        return self.driver.find_element(By.CSS_SELECTOR, '[data-original-title="Compare this Product"]')
 
     def get_headers(self) -> List[str]:
         headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')
@@ -46,6 +50,16 @@ class ProductPage(BasePage):
                 return True
         return False
 
+    def is_presence_alert_text(self, text: str) -> bool:
+        alert: bool = WebDriverWait(self.driver, 5).until(EC.text_to_be_present_in_element((By.CLASS_NAME, 'alert-dismissible'), text))
+        return alert
+
+    def is_successfully_added_to_comparison(self) -> bool:
+        """Если не найден алерт об успешном добавлении к сравнению, то отвалится по тайм-ауту. Иначе True"""
+        alert: bool = self.wait.until(EC.text_to_be_present_in_element(
+            (By.CLASS_NAME, 'alert-dismissible'), 'Success: You have added'))
+        return True
+
     def open_review_tab(self):
         self.get_review_tab().click()
 
@@ -55,8 +69,8 @@ class ProductPage(BasePage):
     def input_review(self, review: str):
         self.get_review_field().send_keys(review)
 
-    @classmethod
-    def generate_random_string(cls, length) -> str:
+    @staticmethod
+    def generate_random_string(length) -> str:
         """Метод генерации случайной строки заданной длины"""
         letters = ascii_letters + ' '
         rand_string: str = ''.join(choice(letters) for i in range(length))
@@ -70,3 +84,6 @@ class ProductPage(BasePage):
 
     def clear_review_field(self):
         self.get_review_field().clear()
+
+    def compare_product(self):
+        self.get_compare_button().click()

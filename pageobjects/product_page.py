@@ -15,9 +15,9 @@ class ProductPage(BasePage):
     def get_review_tab(self) -> WebElement:
         return self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Reviews')
 
-    def get_alert_text(self) -> str:
-        alert: WebElement = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'alert-dismissible')))
-        return alert.text
+    def is_presence_alert_text(self, text: str) -> bool:
+        alert: bool = WebDriverWait(self.driver, 5).until(EC.text_to_be_present_in_element((By.CLASS_NAME, 'alert-dismissible'), text))
+        return alert
 
     def get_name_field(self) -> WebElement:
         return self.driver.find_element(By.ID, 'input-name')

@@ -1,11 +1,12 @@
 from decimal import Decimal
-from typing import List
+from typing import List, Final
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from pageobjects.base_page import BasePage
 from dataclasses import dataclass
+import os
 
 @dataclass
 class ProductInfo:
@@ -14,8 +15,10 @@ class ProductInfo:
 
 class SearchPage(BasePage):
 
+    host: str = os.environ['HOST']
+
     def get_url(self) -> str:
-        return 'http://tutorialsninja.com/demo/index.php?route=product/search'
+        return f'{SearchPage.host}/demo/index.php?route=product/search'
 
     def get_search_criteria_field(self) -> WebElement:
         """Метод получения поля критериев поиска"""

@@ -15,10 +15,8 @@ class ProductInfo:
 
 class SearchPage(BasePage):
 
-    host: str = os.environ['HOST']
-
     def get_url(self) -> str:
-        return f'{SearchPage.host}/demo/index.php?route=product/search'
+        return f'{BasePage.host}demo/index.php?route=product/search'
 
     def get_search_criteria_field(self) -> WebElement:
         """Метод получения поля критериев поиска"""
@@ -36,9 +34,18 @@ class SearchPage(BasePage):
         """Метод получения кнопки глобального поиска"""
         return self.driver.find_element(By.CLASS_NAME, 'input-group-btn')
 
-    def get_notification(self) -> str:
-        """Получения нотификации при пустом результате поиска"""
-        return self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/p[2]').text
+    # def get_notification(self) -> str:
+    #     """Получения нотификации при пустом результате поиска"""
+    #     return self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/p[2]').text
+
+    def is_page_empty(self) -> bool:
+        """Пустая ли страница поиска"""
+        main_container: WebElement = self.driver.find_element(By.ID, 'content')
+        all_p: List[WebElement] = main_container.find_elements(By.TAG_NAME, 'p')
+        for p in all_p:
+            if p.text == 'There is no product that matches the search criteria.':
+                return True
+        return False
 
     def clean_search_field(self):
         self.get_search_field().clear()
@@ -63,13 +70,6 @@ class SearchPage(BasePage):
     def search_in_description_checkbox(self):
         self.driver.find_element(By.ID, 'description').click()
 
-    def get_decimal_price_from_str(self, price_str: str) -> Decimal:
-        """Метод извлечения цены и перевода в decimal"""
-        split_by_lines: List[str] = price_str.split('\n')
-        first_price: List[str] = split_by_lines[0].split(' ')
-        price_wo_symbols: str = first_price[0][1:].replace(',', '')
-        return Decimal(price_wo_symbols)
-
     def get_search_results(self) -> List[ProductInfo]:
         """Возвращает список найденных моделей"""
         products: List[ProductInfo] = []
@@ -82,7 +82,14 @@ class SearchPage(BasePage):
             except NoSuchElementException:
                 price: str = result.find_element(By.CLASS_NAME, 'price').text
 
-            product = ProductInfo(name=name, price=self.get_decimal_price_from_str(price))
+            product = ProductInfo(name=name, price=get_decimal_price_from_str(price))
             products.append(product)
 
         return products
+
+def get_decimal_price_from_str(price_str: str) -> Decimal:
+    """Метод извлечения цены и перевода в decimal"""
+    split_by_lines: List[str] = price_str.split('\n')
+    first_price: List[str] = split_by_lines[0].split(' ')
+    price_wo_symbols: str = first_price[0][1:].replace(',', '')
+    return Decimal(price_wo_symbols)

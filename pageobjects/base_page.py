@@ -1,7 +1,10 @@
+import os
 from selenium.webdriver.remote.webdriver import WebDriver
 
 class BasePage:
     """Базовый класс"""
+
+    host: str = os.environ['HOST']
 
     def __init__(self, driver: WebDriver):
         self.driver = driver

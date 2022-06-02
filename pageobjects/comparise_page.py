@@ -8,7 +8,7 @@ from pageobjects.base_page import BasePage
 class ComparisonPage(BasePage):
 
     def get_url(self) -> str:
-        return 'http://tutorialsninja.com/demo/index.php?route=product/compare'
+        return f'{BasePage.host}demo/index.php?route=product/compare'
 
     def get_remove_button(self) -> WebElement:
         """Кнопка удаления в таблице сравнений"""

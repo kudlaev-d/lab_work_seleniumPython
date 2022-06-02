@@ -1,11 +1,11 @@
 import unittest
-from typing import Final, List
-
+from typing import Final
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from pageobjects.product_page import ProductPage
 from random import randrange
+from random_str_generator import generate_random_string
 
 class AddReviewTest(unittest.TestCase):
 
@@ -39,14 +39,14 @@ class AddReviewTest(unittest.TestCase):
         # Выбрать любой рейтинг, ввести имя и комментарий в 24 символа
         self.apple_page.select_rating_value(randrange(AddReviewTest.MAX_RATING))
         self.apple_page.input_name(self.name)
-        self.apple_page.input_review(self.apple_page.generate_random_string(self.wrong_review_length))
+        self.apple_page.input_review(generate_random_string(self.wrong_review_length))
         self.apple_page.send_review()
 
         self.assertTrue(self.apple_page.is_presence_alert_text(self.expected_unsuccessful_review_alert))
 
         # Ввести в поле комментария больше 25 символов (25-1000)
         self.apple_page.clear_review_field()
-        self.apple_page.input_review(self.apple_page.generate_random_string(randrange(25, 1001)))
+        self.apple_page.input_review(generate_random_string(randrange(25, 1001)))
         self.apple_page.send_review()
 
         self.assertTrue(self.apple_page.is_presence_alert_text(self.expected_successful_review_alert))

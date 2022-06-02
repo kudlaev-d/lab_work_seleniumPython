@@ -1,12 +1,10 @@
 from decimal import Decimal
-from typing import List, Final
-
+from typing import List
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from pageobjects.base_page import BasePage
 from dataclasses import dataclass
-import os
 
 @dataclass
 class ProductInfo:
@@ -33,10 +31,6 @@ class SearchPage(BasePage):
     def get_button_global_search(self) -> WebElement:
         """Метод получения кнопки глобального поиска"""
         return self.driver.find_element(By.CLASS_NAME, 'input-group-btn')
-
-    # def get_notification(self) -> str:
-    #     """Получения нотификации при пустом результате поиска"""
-    #     return self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/p[2]').text
 
     def is_page_empty(self) -> bool:
         """Пустая ли страница поиска"""

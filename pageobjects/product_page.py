@@ -5,17 +5,25 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from typing import List
 from pageobjects.base_page import BasePage
-from string import ascii_letters
-from random import choice
+
+
+# @dataclass
+# class ProductInfo:
+#     name: str
+#     brand: str
+#     product_code: str
+#     price: Decimal
+#     description: str
 
 class ProductPage(BasePage):
+
     def __init__(self, driver: WebDriver, page_id: str):
         BasePage.__init__(self, driver)
         self.page_id = page_id
         self.wait = WebDriverWait(self.driver, 5)
 
     def get_url(self) -> str:
-        return f'http://tutorialsninja.com/demo/index.php?route=product/product&product_id={self.page_id}'
+        return f'{BasePage.host}demo/index.php?route=product/product&product_id={self.page_id}'
 
     def get_review_tab(self) -> WebElement:
         return self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Reviews')
@@ -36,16 +44,26 @@ class ProductPage(BasePage):
     def get_compare_button(self) -> WebElement:
         return self.driver.find_element(By.CSS_SELECTOR, '[data-original-title="Compare this Product"]')
 
-    def get_headers(self) -> List[str]:
-        headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')
+    # def get_headers(self) -> List[str]:
+    #     headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')
+    #     product_name: List[str] = []
+    #     for header in headers:
+    #         product_name.append(header.text)
+    #     return product_name
+    #
+    # def product_is_available(self, name: str) -> bool:
+    #     products: List[str] = self.get_headers()
+    #     for product in products:
+    #         if product == name:
+    #             return True
+    #     return False
+
+    def is_product_available(self, name: str) -> bool:
         product_name: List[str] = []
+        headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')
         for header in headers:
             product_name.append(header.text)
-        return product_name
-
-    def product_is_available(self, name: str) -> bool:
-        products: List[str] = self.get_headers()
-        for product in products:
+        for product in product_name:
             if product == name:
                 return True
         return False
@@ -68,13 +86,6 @@ class ProductPage(BasePage):
 
     def input_review(self, review: str):
         self.get_review_field().send_keys(review)
-
-    @staticmethod
-    def generate_random_string(length) -> str:
-        """Метод генерации случайной строки заданной длины"""
-        letters = ascii_letters + ' '
-        rand_string: str = ''.join(choice(letters) for i in range(length))
-        return rand_string
 
     def select_rating_value(self, value: int):
         self.get_rating_values()[value].click()

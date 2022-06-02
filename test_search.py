@@ -8,7 +8,7 @@ from pageobjects.search_page import SearchPage, ProductInfo
 class SearchPageTest(unittest.TestCase):
     def setUp(self) -> None:
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-        self.search_page = SearchPage(self.driver)
+        self.search_page = SearchPage(driver=self.driver)
         self.search_page.open()
         self.first_product_name: str = 'Apple'
         self.second_product_name: str = 'Sony'

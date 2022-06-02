@@ -1,6 +1,5 @@
 import unittest
-from typing import Dict
-
+from const import *
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -10,7 +9,6 @@ class ProductPageTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-        self.product_id: str = '42'
         self.expected_product: dict = {
                         'name': 'Apple Cinema 30"',
                         'Brand': ' Apple',
@@ -25,7 +23,7 @@ class ProductPageTest(unittest.TestCase):
 
     def test_productAvailable(self):
         """Тест, что присутствует информация о продукте"""
-        product_page = ProductPage(self.driver, self.product_id)
+        product_page = ProductPage(driver=self.driver, page_id=APPLE_CINEMA_ID)
         product_page.open()
 
         self.assertEqual(self.expected_product, product_page.get_product_full_info())

@@ -6,11 +6,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 from pageobjects.product_page import ProductPage
 from random import randrange
 from random_str_generator import generate_random_string
+from const import *
 
 class AddReviewTest(unittest.TestCase):
-
-    MAX_RATING: Final = 5
-    APPLE_CINEMA_ID: Final = '42'
 
     def setUp(self) -> None:
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
@@ -19,7 +17,6 @@ class AddReviewTest(unittest.TestCase):
         self.expected_successful_review_alert: str = 'Thank you for your review. ' \
                                                      'It has been submitted to the webmaster for approval.'
         self.name: str = 'John'
-        self.wrong_review_length: int = 24
 
     def tearDown(self) -> None:
         self.driver.quit()
@@ -27,7 +24,7 @@ class AddReviewTest(unittest.TestCase):
     def test_add_review(self):
         """Тест добавления отзыва о товаре"""
 
-        self.apple_page = ProductPage(driver=self.driver, page_id=AddReviewTest.APPLE_CINEMA_ID)
+        self.apple_page = ProductPage(driver=self.driver, page_id=APPLE_CINEMA_ID)
         self.apple_page.open()
 
         # Открыть вкладку review, не заполняя поля кликнуть Continue
@@ -37,9 +34,9 @@ class AddReviewTest(unittest.TestCase):
         self.assertTrue(self.apple_page.is_presence_alert_text(self.expected_rating_alert))
 
         # Выбрать любой рейтинг, ввести имя и комментарий в 24 символа
-        self.apple_page.select_rating_value(randrange(AddReviewTest.MAX_RATING))
+        self.apple_page.select_rating_value(randrange(MAX_RATING))
         self.apple_page.input_name(self.name)
-        self.apple_page.input_review(generate_random_string(self.wrong_review_length))
+        self.apple_page.input_review(generate_random_string(WRONG_REVIEW_LENGTH))
         self.apple_page.send_review()
 
         self.assertTrue(self.apple_page.is_presence_alert_text(self.expected_unsuccessful_review_alert))

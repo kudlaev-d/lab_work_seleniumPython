@@ -1,6 +1,6 @@
 import unittest
 from typing import List
-
+from const import *
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -11,12 +11,10 @@ from pageobjects.product_page import ProductPage
 class CompareTest(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.apple_cinema_id: str = '42'
-        self.samsung_syncmaster_id: str = '33'
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-        self.apple_product_page = ProductPage(driver=self.driver, page_id=self.apple_cinema_id)
-        self.samsung_product_page = ProductPage(driver=self.driver, page_id=self.samsung_syncmaster_id)
-        self.comparison_page = ComparisonPage(self.driver)
+        self.apple_product_page = ProductPage(driver=self.driver, page_id=APPLE_CINEMA_ID)
+        self.samsung_product_page = ProductPage(driver=self.driver, page_id=SAMSUNG_SYNCMASTER_ID)
+        self.comparison_page = ComparisonPage(driver=self.driver)
         # Продукты, которые будут сравниваться
         self.comparable_products: List[str] = ['Apple Cinema 30"', 'Samsung SyncMaster 941BW']
 

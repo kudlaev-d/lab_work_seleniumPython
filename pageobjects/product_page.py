@@ -55,8 +55,6 @@ class ProductPage(BasePage):
         return description[0]
 
     def get_product_info_wo_price(self) -> Dict:
-        """"""
-        product_info: Dict = {}  # Словарь, в котором будет храниться информация о продукте
         ul_lists: List[WebElement] = self.get_product_info_lists()  # Берем все неупорядоченные списки на странице
         li_info_product = ul_lists[0].find_elements(By.TAG_NAME, 'li')  # У каждого ul берем все его li
 
@@ -65,7 +63,7 @@ class ProductPage(BasePage):
         for li in li_info_product:
             info.append(tuple(li.text.split(':')))
 
-        # Создаем словарь
+        # Создаем словарь, в котором хранится извлеченная информация о продукте
         product_info: Dict = dict(info)
 
         # Удаляем лишние значения по ключам
@@ -75,6 +73,7 @@ class ProductPage(BasePage):
         return product_info
 
     def get_product_price(self) -> float:
+        """Возвращает стоимость продукта"""
         ul_lists: List[WebElement] = self.get_product_info_lists()
         li_price_product = ul_lists[1].find_element(By.TAG_NAME, 'h2')
         return float(li_price_product.text[1:])  # Берем цену, реализованную как заголовок h2, и отбрасываем '$'

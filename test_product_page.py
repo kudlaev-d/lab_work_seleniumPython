@@ -1,4 +1,6 @@
 import unittest
+from typing import Dict
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -9,7 +11,14 @@ class ProductPageTest(unittest.TestCase):
     def setUp(self) -> None:
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         self.product_id: str = '42'
-        self.product_name: str = 'Apple Cinema 30"'
+        self.expected_product: dict = {
+                        'name': 'Apple Cinema 30"',
+                        'Brand': ' Apple',
+                        'Product Code': ' Product 15',
+                        'price': 110.0,
+                        'description': 'The 30-inch Apple Cinema HD Display delivers an amazing 2560 x 1600 '
+                                       'pixel resolution'
+                        }
 
     def tearDown(self) -> None:
         self.driver.close()
@@ -19,4 +28,4 @@ class ProductPageTest(unittest.TestCase):
         product_page = ProductPage(self.driver, self.product_id)
         product_page.open()
 
-        self.assertTrue(product_page.is_product_available(self.product_name))
+        self.assertEqual(self.expected_product, product_page.get_product_full_info())

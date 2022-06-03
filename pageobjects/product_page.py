@@ -89,6 +89,9 @@ class ProductPage(BasePage):
         })
         return product_full_info
 
+    def get_product_qty_field(self) -> WebElement:
+        return self.driver.find_element(By.ID, 'input-quantity')
+
     # def get_headers(self) -> List[str]:
     #     headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')
     #     product_name: List[str] = []
@@ -114,12 +117,12 @@ class ProductPage(BasePage):
         return False
 
     def is_presence_alert_text(self, text: str) -> bool:
-        alert: bool = WebDriverWait(self.driver, 5). \
+        alert: bool = self.wait. \
             until(ec.text_to_be_present_in_element((By.CLASS_NAME, 'alert-dismissible'), text))
         return alert
 
-    def is_successfully_added_to_comparison(self) -> bool:
-        """Если не найден алерт об успешном добавлении к сравнению, то отвалится по тайм-ауту. Иначе True"""
+    def is_successfully_added(self) -> bool:
+        """Если не найден алерт об успешном добавлении (к сравнению/в корзину), то отвалится по тайм-ауту. Иначе True"""
         alert: bool = self.wait.until(ec.text_to_be_present_in_element(
             (By.CLASS_NAME, 'alert-dismissible'), 'Success: You have added'))
         return alert
@@ -144,3 +147,13 @@ class ProductPage(BasePage):
 
     def add_to_compare(self):
         self.get_compare_button().click()
+
+    def input_qty(self, qty: int):
+        self.get_product_qty_field().send_keys(qty)
+
+    def clear_qty_field(self):
+        self.get_product_qty_field().clear()
+
+    def add_to_cart(self):
+        self.driver.find_element(By.ID, 'button-cart').click()
+

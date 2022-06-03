@@ -29,7 +29,7 @@ class CompareTest(unittest.TestCase):
         self.apple_product_page.add_to_compare()
 
         # Продукт успешно добавился?
-        self.assertTrue(self.apple_product_page.is_successfully_added_to_comparison())
+        self.assertTrue(self.apple_product_page.is_successfully_added())
 
         # Открываем страницу продукта Samsung и добавить его к сравнению
         self.samsung_product_page.open()

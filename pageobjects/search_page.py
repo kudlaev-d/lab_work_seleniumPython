@@ -14,7 +14,7 @@ class ProductInfo:
 class SearchPage(BasePage):
 
     def get_url(self) -> str:
-        return f'{BasePage.host}demo/index.php?route=product/search'
+        return f'{BasePage.host}index.php?route=product/search'
 
     def get_search_criteria_field(self) -> WebElement:
         """Метод получения поля критериев поиска"""

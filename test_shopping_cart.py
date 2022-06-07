@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from pageobjects.product_page import ProductPage
-from pageobjects.shopping_cart_page import ShoppingCart
+from pageobjects.shopping_cart_page import ShoppingCart, CartItem, Cart
 from const import *
 
 class ShoppingCartTest(unittest.TestCase):
@@ -35,4 +35,17 @@ class ShoppingCartTest(unittest.TestCase):
 
         # Открываем корзину и проверяем, что в ней есть добавленные товары
         self.shopping_cart.open()
-        self.shopping_cart.get_product_qty()
+        cart_items: List[CartItem] = self.shopping_cart.get_cart_items()
+        cart: Cart = Cart(items=cart_items)
+
+        self.assertEqual(cart_items[0].product_name, 'Samsung SyncMaster 941BW')
+        self.assertEqual(cart_items[1].product_name, 'HP LP3065')
+        self.assertEqual(self.shopping_cart.get_cart_table_price('Total'), 606)
+        self.assertEqual(self.shopping_cart.get_cart_table_price('Total'), cart.get_total())
+
+        self.shopping_cart.remove_all_products_from_cart(len(cart_items))
+
+        self.assertTrue(self.shopping_cart.is_page_empty())
+
+
+

@@ -1,10 +1,8 @@
 from dataclasses import dataclass
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from typing import List
+from typing import List, Dict
 from pageobjects.base_page import BasePage
 from const import *
 
@@ -19,9 +17,8 @@ class CartItem:
 
 @dataclass
 class Cart:
-    sub_total: float
-    vat: float
     items: List[CartItem]
+    vat: float = VAT
 
     def get_total(self) -> float:
         """Подсчет стоимости корзины с учетом налогов"""
@@ -39,38 +36,74 @@ class Cart:
 
     def get_vat(self) -> float:
         """Расчет VAT"""
-        one_percent: float = self.get_total() / VAT+100
+        one_percent: float = (self.get_total() - self.get_eco_tax()) / (VAT+100)
         return one_percent * VAT
+        pass
 
     def get_subtotal(self) -> float:
         """Подсчет стоимости до вычета налогов"""
-        return self.get_total() - self.get_vat()
+        return (self.get_total() - self.get_eco_tax()) - self.get_vat()
 
 class ShoppingCart(BasePage):
 
     def get_url(self) -> str:
-        return f'{BasePage.host}demo/index.php?route=checkout/cart'
+        return f'{BasePage.host}index.php?route=checkout/cart'
 
     def get_products_table(self) -> WebElement:
         return self.driver.find_element(By.CLASS_NAME, 'table-responsive')
-
-    # def get_table_body(self) -> List[WebElement]:
-    #     return self.get_products_table().find_elements(By.TAG_NAME, 'tbody')
 
     def get_product_table_rows(self) -> List[WebElement]:
         rows = self.get_products_table().find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
         return rows
 
-    def get_product_name(self) -> str:
-        rows: List[WebElement] = self.get_product_table_rows()
+    def get_cart_items(self) -> List[CartItem]:
+        cart_items: List[CartItem] = []
+        rows = self.get_product_table_rows()
         for row in rows:
-            return row.find_element(By.TAG_NAME, 'a').text
+            name = row.find_element(By.TAG_NAME, 'a').accessible_name
+            qty = int(row.find_element(By.CLASS_NAME, 'form-control').get_attribute('value'))
+            unit_price = float(row.find_element(By.CLASS_NAME, 'text-right').text[1:])
 
-    def get_product_qty(self) -> int:
-        qty = []
-        rows: List[WebElement] = self.get_product_table_rows()
-        for row in rows:
-            qty.append(row.find_element(By.CLASS_NAME, 'form-control').get_attribute('value'))
-        pass
+            cart_item: CartItem = CartItem(
+                product_name=name,
+                qty=qty,
+                unit_price=unit_price
+            )
+            cart_items.append(cart_item)
+        return cart_items
 
+    def get_cart_prices_table(self) -> WebElement:
+        table: WebElement = self.driver.find_element(By.CLASS_NAME, 'col-sm-offset-8')
+        return table
+
+    def get_cart_table_price(self, name_price: str):
+        cart_table_prices: Dict = {}
+        table_rows = self.get_cart_prices_table().find_elements(By.TAG_NAME, 'tr')
+
+        for row in table_rows:
+            td = row.find_elements(By.CLASS_NAME, 'text-right')
+            cart_table_prices[td[0].text[:-1]] = float(td[1].text[1:])
+
+        return cart_table_prices[name_price]
+
+    def get_remove_button(self) -> WebElement:
+        return self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-original-title="Remove"]')))
+
+    def get_notification(self) -> WebElement:
+        """Метод, возвращающий объект, который присутствует на пустой странице корзины"""
+        content: WebElement = self.driver.find_element(By.ID, 'content')
+        return content.find_element(By.TAG_NAME, 'p')
+
+    def remove_product_from_cart(self):
+        self.get_remove_button().click()
+
+    def remove_all_products_from_cart(self, count: int):
+        while count > 0:
+            self.remove_product_from_cart()
+            self.driver.refresh()
+            count -= 1
+
+    def is_page_empty(self) -> bool:
+        """Пустая ли корзина"""
+        return self.get_notification().text == 'Your shopping cart is empty!'
 

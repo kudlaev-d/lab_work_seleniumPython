@@ -14,7 +14,7 @@ class ProductPage(BasePage):
         self.wait = WebDriverWait(self.driver, 5)
 
     def get_url(self) -> str:
-        return f'{BasePage.host}demo/index.php?route=product/product&product_id={self.page_id}'
+        return f'{BasePage.host}index.php?route=product/product&product_id={self.page_id}'
 
     def get_review_tab(self) -> WebElement:
         return self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Reviews')
@@ -56,7 +56,7 @@ class ProductPage(BasePage):
 
     def get_product_info_wo_price(self) -> Dict:
         ul_lists: List[WebElement] = self.get_product_info_lists()  # Берем все неупорядоченные списки на странице
-        li_info_product = ul_lists[0].find_elements(By.TAG_NAME, 'li')  # У каждого ul берем все его li
+        li_info_product = ul_lists[0].find_elements(By.TAG_NAME, 'li')  # У первого ul берем все его li
 
         # Полученные значения разделяем по ':' и добавляем в массив (list[list[str]])
         info: List[tuple] = []

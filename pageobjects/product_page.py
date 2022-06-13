@@ -1,7 +1,6 @@
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from typing import List, Dict
 from pageobjects.base_page import BasePage
@@ -11,7 +10,6 @@ class ProductPage(BasePage):
     def __init__(self, driver: WebDriver, page_id: str):
         BasePage.__init__(self, driver)
         self.page_id = page_id
-        self.wait = WebDriverWait(self.driver, 5)
 
     def get_url(self) -> str:
         return f'{BasePage.host}index.php?route=product/product&product_id={self.page_id}'
@@ -61,7 +59,7 @@ class ProductPage(BasePage):
         # Полученные значения разделяем по ':' и добавляем в массив (list[list[str]])
         info: List[tuple] = []
         for li in li_info_product:
-            info.append(tuple(li.text.split(':')))
+            info.append(tuple(li.text.split(': ')))
 
         # Создаем словарь, в котором хранится извлеченная информация о продукте
         product_info: Dict = dict(info)
@@ -83,28 +81,14 @@ class ProductPage(BasePage):
         product_full_info: Dict = self.get_product_info_wo_price()
 
         product_full_info.update({
-            'price': self.get_product_price(),
-            'name': self.get_product_name(),
-            'description': self.get_description_part()
+            'Price': self.get_product_price(),
+            'Name': self.get_product_name(),
+            'Description': self.get_description_part()
         })
         return product_full_info
 
     def get_product_qty_field(self) -> WebElement:
         return self.driver.find_element(By.ID, 'input-quantity')
-
-    # def get_headers(self) -> List[str]:
-    #     headers: List[WebElement] = self.driver.find_elements(By.TAG_NAME, 'h1')
-    #     product_name: List[str] = []
-    #     for header in headers:
-    #         product_name.append(header.text)
-    #     return product_name
-    #
-    # def product_is_available(self, name: str) -> bool:
-    #     products: List[str] = self.get_headers()
-    #     for product in products:
-    #         if product == name:
-    #             return True
-    #     return False
 
     def is_product_available(self, name: str) -> bool:
         product_name: List[str] = []

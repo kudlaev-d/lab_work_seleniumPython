@@ -32,6 +32,23 @@ class SearchPage(BasePage):
         """Метод получения кнопки глобального поиска"""
         return self.driver.find_element(By.CLASS_NAME, 'input-group-btn')
 
+    def get_search_results(self) -> List[ProductInfo]:
+        """Возвращает список найденных моделей"""
+        products: List[ProductInfo] = []
+        results: List[WebElement] = self.driver.find_elements(By.CLASS_NAME, 'product-layout')
+
+        for result in results:
+            name: str = result.find_element(By.TAG_NAME, 'h4').text
+            try:
+                price: str = result.find_element(By.CLASS_NAME, 'price-new').text
+            except NoSuchElementException:
+                price: str = result.find_element(By.CLASS_NAME, 'price').text
+
+            product = ProductInfo(name=name, price=get_decimal_price_from_str(price))
+            products.append(product)
+
+        return products
+
     def is_page_empty(self) -> bool:
         """Пустая ли страница поиска"""
         main_container: WebElement = self.driver.find_element(By.ID, 'content')
@@ -63,23 +80,6 @@ class SearchPage(BasePage):
 
     def search_in_description_checkbox(self):
         self.driver.find_element(By.ID, 'description').click()
-
-    def get_search_results(self) -> List[ProductInfo]:
-        """Возвращает список найденных моделей"""
-        products: List[ProductInfo] = []
-        results: List[WebElement] = self.driver.find_elements(By.CLASS_NAME, 'product-layout')
-
-        for result in results:
-            name: str = result.find_element(By.TAG_NAME, 'h4').text
-            try:
-                price: str = result.find_element(By.CLASS_NAME, 'price-new').text
-            except NoSuchElementException:
-                price: str = result.find_element(By.CLASS_NAME, 'price').text
-
-            product = ProductInfo(name=name, price=get_decimal_price_from_str(price))
-            products.append(product)
-
-        return products
 
 def get_decimal_price_from_str(price_str: str) -> Decimal:
     """Метод извлечения цены и перевода в decimal"""

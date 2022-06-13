@@ -36,9 +36,8 @@ class Cart:
 
     def get_vat(self) -> float:
         """Расчет VAT"""
-        one_percent: float = (self.get_total() - self.get_eco_tax()) / (VAT+100)
+        one_percent: float = (self.get_total() - self.get_eco_tax()) / (VAT+1)
         return one_percent * VAT
-        pass
 
     def get_subtotal(self) -> float:
         """Подсчет стоимости до вычета налогов"""
@@ -76,7 +75,8 @@ class ShoppingCart(BasePage):
         table: WebElement = self.driver.find_element(By.CLASS_NAME, 'col-sm-offset-8')
         return table
 
-    def get_cart_table_price(self, name_price: str):
+    def get_cart_table_price(self, name: str) -> Dict:
+        """Возвращает значение из таблицы цен и налогов по необходимому имени"""
         cart_table_prices: Dict = {}
         table_rows = self.get_cart_prices_table().find_elements(By.TAG_NAME, 'tr')
 
@@ -84,7 +84,7 @@ class ShoppingCart(BasePage):
             td = row.find_elements(By.CLASS_NAME, 'text-right')
             cart_table_prices[td[0].text[:-1]] = float(td[1].text[1:])
 
-        return cart_table_prices[name_price]
+        return cart_table_prices[name]
 
     def get_remove_button(self) -> WebElement:
         return self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-original-title="Remove"]')))
@@ -94,16 +94,19 @@ class ShoppingCart(BasePage):
         content: WebElement = self.driver.find_element(By.ID, 'content')
         return content.find_element(By.TAG_NAME, 'p')
 
+    def is_page_empty(self) -> bool:
+        """Пустая ли корзина"""
+        return self.get_notification().text == 'Your shopping cart is empty!'
+
     def remove_product_from_cart(self):
-        self.get_remove_button().click()
+        remove_button = self.get_remove_button()
+        remove_button.click()
+        self.wait.until(EC.staleness_of(remove_button))
 
     def remove_all_products_from_cart(self, count: int):
         while count > 0:
             self.remove_product_from_cart()
-            self.driver.refresh()
             count -= 1
 
-    def is_page_empty(self) -> bool:
-        """Пустая ли корзина"""
-        return self.get_notification().text == 'Your shopping cart is empty!'
+
 

@@ -1,4 +1,5 @@
 import unittest
+import csv
 from const import *
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -9,14 +10,12 @@ class ProductPageTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-        self.expected_product: dict = {
-                        'name': 'Apple Cinema 30"',
-                        'Brand': ' Apple',
-                        'Product Code': ' Product 15',
-                        'price': 110.0,
-                        'description': 'The 30-inch Apple Cinema HD Display delivers an amazing 2560 x 1600 '
-                                       'pixel resolution'
-                        }
+        with open('test-data/test_product_page.csv') as csv_file:
+            # Инициализируем объект класса DictReader, передаем параметр quoting
+            # для преобразования полей без кавычек во float
+            csv_reader = csv.DictReader(csv_file, quoting=csv.QUOTE_NONNUMERIC)
+            for row in csv_reader:
+                self.expected_product = row
 
     def tearDown(self) -> None:
         self.driver.close()
@@ -26,4 +25,4 @@ class ProductPageTest(unittest.TestCase):
         product_page = ProductPage(driver=self.driver, page_id=APPLE_CINEMA_ID)
         product_page.open()
 
-        self.assertEqual(self.expected_product, product_page.get_product_full_info())
+        self.assertDictEqual(self.expected_product, product_page.get_product_full_info())

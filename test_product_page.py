@@ -1,15 +1,13 @@
 import unittest
 import csv
 from const import *
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from pageobjects.product_page import ProductPage
+from webdriver_factory import WebDriverFactory
 
 class ProductPageTest(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.driver = WebDriverFactory.get_driver()
         with open('test-data/test_product_page.csv') as csv_file:
             # Инициализируем объект класса DictReader, передаем параметр quoting
             # для преобразования полей без кавычек во float

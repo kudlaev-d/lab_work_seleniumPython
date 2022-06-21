@@ -22,7 +22,7 @@ class ComparisonPage(BasePage):
     def get_comparable_products(self) -> List[str]:
         """Метод, возвращающий названия сравниваемых продуктов"""
         product_names: List[str] = []
-        products_table: WebElement = self.driver.find_element(By.TAG_NAME, 'tbody')
+        products_table: WebElement = self.wait.until(EC.presence_of_element_located((By.TAG_NAME, 'tbody')))
         links: List[WebElement] = products_table.find_elements(By.TAG_NAME, 'a')
         for link in links:
             product_names.append(link.text)

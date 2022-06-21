@@ -1,13 +1,11 @@
 import unittest
 from typing import List
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from pageobjects.search_page import SearchPage, ProductInfo
+from webdriver_factory import WebDriverFactory
 
 class SearchPageTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.driver = WebDriverFactory.get_driver()
         self.search_page = SearchPage(driver=self.driver)
         self.search_page.open()
         self.first_product_name: str = 'Apple'

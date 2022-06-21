@@ -1,17 +1,14 @@
 import unittest
-from typing import Final
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from pageobjects.product_page import ProductPage
 from random import randrange
 from random_str_generator import generate_random_string
 from const import *
+from webdriver_factory import WebDriverFactory
 
 class AddReviewTest(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.driver = WebDriverFactory.get_driver()
         self.expected_rating_alert: str = 'Warning: Please select a review rating!'
         self.expected_unsuccessful_review_alert: str = 'Warning: Review Text must be between 25 and 1000 characters!'
         self.expected_successful_review_alert: str = 'Thank you for your review. ' \

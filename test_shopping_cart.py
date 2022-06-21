@@ -1,15 +1,13 @@
 import unittest
 from typing import List
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from pageobjects.product_page import ProductPage
 from pageobjects.shopping_cart_page import ShoppingCart, CartItem, Cart
 from const import *
+from webdriver_factory import WebDriverFactory
 
 class ShoppingCartTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.driver = WebDriverFactory.get_driver()
         self.samsung_page = ProductPage(driver=self.driver, page_id=SAMSUNG_SYNCMASTER_ID)
         self.hp_page = ProductPage(driver=self.driver, page_id=HP_LP3065_ID)
         self.shopping_cart = ShoppingCart(driver=self.driver)

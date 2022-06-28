@@ -41,6 +41,7 @@ class ShoppingCartTest(unittest.TestCase):
         self.assertEqual(cart_items[1].product_name, 'HP LP3065')
         self.assertEqual(self.shopping_cart.get_cart_table_price('Total'), 606)
         # Рассчитываем итоговую стоимость сами и сравниваем с той, что на сайте
+        # (избыточно, но просто было интересно сделать)
         self.assertEqual(self.shopping_cart.get_cart_table_price('Total'), cart.get_total())
 
         self.shopping_cart.remove_all_products_from_cart(len(cart_items))

@@ -16,6 +16,7 @@ class AddReviewTest(unittest.TestCase):
         self.name: str = 'John'
 
     def tearDown(self) -> None:
+        self.driver.save_screenshot('test-reports/' + self.id() + '.png')
         self.driver.quit()
 
     def test_add_review(self):

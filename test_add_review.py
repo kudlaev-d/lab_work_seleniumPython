@@ -22,7 +22,7 @@ class AddReviewTest(unittest.TestCase):
     def test_add_review(self):
         """Тест добавления отзыва о товаре"""
 
-        self.apple_page = ProductPage(driver=self.driver, page_id=APPLE_CINEMA_ID)
+        self.apple_page = ProductPage(driver=self.driver, product_id=APPLE_CINEMA_ID)
         self.apple_page.open()
 
         # Открыть вкладку review, не заполняя поля кликнуть Continue

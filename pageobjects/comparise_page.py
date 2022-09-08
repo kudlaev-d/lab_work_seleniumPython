@@ -1,3 +1,4 @@
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -12,7 +13,8 @@ class ComparisonPage(BasePage):
 
     def get_remove_button(self) -> WebElement:
         """Кнопка удаления в таблице сравнений"""
-        return self.driver.find_element(By.CLASS_NAME, 'btn-danger')
+        element = self.driver.find_element(By.CLASS_NAME, 'btn-danger')
+        return element
 
     def get_notification(self) -> WebElement:
         """Метод, возвращающий объект, который присутствует на пустой странице сравнения"""
@@ -22,7 +24,7 @@ class ComparisonPage(BasePage):
     def get_comparable_products(self) -> List[str]:
         """Метод, возвращающий названия сравниваемых продуктов"""
         product_names: List[str] = []
-        products_table: WebElement = self.wait.until(EC.presence_of_element_located((By.TAG_NAME, 'tbody')))
+        products_table: WebElement = self.driver.find_element(By.TAG_NAME, 'tbody')
         links: List[WebElement] = products_table.find_elements(By.TAG_NAME, 'a')
         for link in links:
             product_names.append(link.text)
@@ -48,11 +50,16 @@ class ComparisonPage(BasePage):
         """Метод удаления элемента из таблицы сравнения"""
         self.get_remove_button().click()
 
-    def remove_all_comparable_products(self, count: int):
-        """Метод последовательного удаления нескольких продуктов из таблицы сравнения"""
-        while count > 0:
+    def remove_all_comparable_products(self):
+        """Метод последовательного удаления всех продуктов из таблицы сравнения
+        Идея в том, что мы кликаем на кнопку Remove, если она есть на странице"""
+        flag: bool = True
+        while flag:
             self.remove_comparable_product()
-            count -= 1
+            try:
+                self.get_remove_button()
+            except NoSuchElementException:
+                flag = False
 
     def is_page_empty(self) -> bool:
         """Пустая ли страница сравнения"""

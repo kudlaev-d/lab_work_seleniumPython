@@ -135,7 +135,12 @@ class WebDriverFactory:
         # )
         #
         # Установка геолокации
-        WebDriverFactory.set_geolocation(chrome_driver)
+        WebDriverFactory.set_geolocation(
+            chrome_driver,
+            latitude=37.7749,
+            longitude=122.4194,
+            accuracy=1000
+        )
 
         # Установка настроек сетевого соединения
         chrome_driver.execute_cdp_cmd(
@@ -162,7 +167,7 @@ class WebDriverFactory:
         return chrome_driver
 
     @staticmethod
-    def set_geolocation(chrome_driver):
+    def set_geolocation(chrome_driver, latitude: float, longitude: float, accuracy: float):
         chrome_driver.execute_cdp_cmd(
             cmd="Browser.grantPermissions",
             cmd_args={
@@ -172,9 +177,9 @@ class WebDriverFactory:
         chrome_driver.execute_cdp_cmd(
             cmd="Emulation.setGeolocationOverride",
             cmd_args={
-                "latitude": 37.7749,
-                "longitude": 122.4194,
-                "accuracy": 1000
+                "latitude": latitude,
+                "longitude": longitude,
+                "accuracy": accuracy
             }
         )
 

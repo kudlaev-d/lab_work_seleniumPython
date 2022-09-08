@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -87,7 +89,8 @@ class ShoppingCart(BasePage):
         return cart_table_prices[name]
 
     def get_remove_button(self) -> WebElement:
-        return self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-original-title="Remove"]')))
+        return self.driver.find_element(By.CSS_SELECTOR, '[data-original-title="Remove"]')
+        # return self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-original-title="Remove"]')))
 
     def get_notification(self) -> WebElement:
         """Метод, возвращающий объект, который присутствует на пустой странице корзины"""
@@ -103,10 +106,15 @@ class ShoppingCart(BasePage):
         remove_button.click()
         self.wait.until(EC.staleness_of(remove_button))
 
-    def remove_all_products_from_cart(self, count: int):
-        while count > 0:
+    def remove_all_products_from_cart(self):
+        """Метод последовательного удаления всех продуктов из таблицы сравнения
+        Идея в том, что мы кликаем на кнопку Remove, если она есть на странице"""
+        flag: bool = True
+        while flag:
             self.remove_product_from_cart()
-            count -= 1
-
+            try:
+                self.get_remove_button()
+            except NoSuchElementException:
+                flag = False
 
 

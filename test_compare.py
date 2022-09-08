@@ -9,8 +9,8 @@ class CompareTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.driver = WebDriverFactory.get_driver()
-        self.apple_product_page = ProductPage(driver=self.driver, page_id=APPLE_CINEMA_ID)
-        self.samsung_product_page = ProductPage(driver=self.driver, page_id=SAMSUNG_SYNCMASTER_ID)
+        self.apple_product_page = ProductPage(driver=self.driver, product_id=APPLE_CINEMA_ID)
+        self.samsung_product_page = ProductPage(driver=self.driver, product_id=SAMSUNG_SYNCMASTER_ID)
         self.comparison_page = ComparisonPage(driver=self.driver)
         # Продукты, которые будут сравниваться
         self.comparable_products: List[str] = ['Apple Cinema 30"', 'Samsung SyncMaster 941BW']
@@ -39,7 +39,7 @@ class CompareTest(unittest.TestCase):
         self.assertTrue(self.comparison_page.is_products_presence(self.comparable_products))
 
         # Удалить все товары из сравнения
-        self.comparison_page.remove_all_comparable_products(len(self.comparable_products))
+        self.comparison_page.remove_all_comparable_products()
 
         # Страница сравнения пуста?
         self.assertTrue(self.comparison_page.is_page_empty())

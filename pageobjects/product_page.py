@@ -2,17 +2,24 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
-from typing import List, Dict
+from typing import List, Dict, TypedDict
 from pageobjects.base_page import BasePage
+
+class Product_info(TypedDict):
+    brand: str
+    product_code: str
+    price: float
+    name: str
+    description: str
 
 class ProductPage(BasePage):
 
-    def __init__(self, driver: WebDriver, page_id: str):
+    def __init__(self, driver: WebDriver, product_id: str):
         BasePage.__init__(self, driver)
-        self.page_id = page_id
+        self.product_id = product_id
 
     def get_url(self) -> str:
-        return f'{BasePage.host}index.php?route=product/product&product_id={self.page_id}'
+        return f'{BasePage.host}index.php?route=product/product&product_id={self.product_id}'
 
     def get_review_tab(self) -> WebElement:
         return self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Reviews')
@@ -52,21 +59,24 @@ class ProductPage(BasePage):
         description: List[str] = self.driver.find_element(By.ID, 'tab-description').text.split('.')
         return description[0]
 
-    def get_product_info_wo_price(self) -> Dict:
+    def get_product_info_wo_price(self) -> Product_info:
         ul_lists: List[WebElement] = self.get_product_info_lists()  # Берем все неупорядоченные списки на странице
-        li_info_product = ul_lists[0].find_elements(By.TAG_NAME, 'li')  # У первого ul берем все его li
+        li_info_product: List[WebElement] = ul_lists[0].find_elements(By.TAG_NAME, 'li')  # У первого ul берем все его li
 
-        # Полученные значения разделяем по ':' и добавляем в массив (list[list[str]])
-        info: List[tuple] = []
+        # Полученные значения разделяем по ':' и добавляем в промежуточный dict
+        info: Dict = {}
         for li in li_info_product:
-            info.append(tuple(li.text.split(': ')))
+            item: List[str] = li.text.split(': ')
+            info[item[0]] = f'{item[1]}'
 
-        # Создаем словарь, в котором хранится извлеченная информация о продукте
-        product_info: Dict = dict(info)
-
-        # Удаляем лишние значения по ключам
-        keys_to_remove: List[str] = ['Reward Points', 'Availability']
-        [product_info.pop(key) for key in keys_to_remove]
+        # Создаем типизированный словарь
+        product_info: Product_info = Product_info(
+            brand=info['Brand'],
+            product_code=info['Product Code'],
+            price=0.0,
+            name='',
+            description=''
+        )
 
         return product_info
 
@@ -76,16 +86,15 @@ class ProductPage(BasePage):
         li_price_product = ul_lists[1].find_element(By.TAG_NAME, 'h2')
         return float(li_price_product.text[1:])  # Берем цену, реализованную как заголовок h2, и отбрасываем '$'
 
-    def get_product_full_info(self) -> Dict:
+    def get_product_full_info(self) -> Product_info:
         """Возвращает полную информацию о продукте"""
-        product_full_info: Dict = self.get_product_info_wo_price()
+        product_info: Product_info = self.get_product_info_wo_price()
 
-        product_full_info.update({
-            'Price': self.get_product_price(),
-            'Name': self.get_product_name(),
-            'Description': self.get_description_part()
-        })
-        return product_full_info
+        product_info['price'] = self.get_product_price()
+        product_info['name'] = self.get_product_name()
+        product_info['description'] = self.get_description_part()
+
+        return product_info
 
     def get_product_qty_field(self) -> WebElement:
         return self.driver.find_element(By.ID, 'input-quantity')

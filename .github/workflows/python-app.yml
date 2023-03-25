@@ -41,11 +41,10 @@ jobs:
       with:
         name: test-reports
         path: test-reports
-    - name: Test notification
-      uses: rjstone/discord-webhook-notify@v1
-      with:
-        description: This is notification test
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+    - name: Discord notification
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      uses: Ilshidur/action-discord@master
 
     services:
       headless:

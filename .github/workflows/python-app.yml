@@ -45,7 +45,7 @@ jobs:
       uses: sarisia/actions-status-discord@v1
       if: always()
       with:
-        webhook: https://discord.com/api/webhooks/1089302697976541335/7-LBDDxI8ySBYQlIBFFRIla3G-xxGUrN5bQFrzOKhEeqb5XYxcbWRY1O5MN4wqrnFlnJ
+        webhook: https://discord.com/api/webhooks/1089321172526698566/mSGNROk1kV-NI4a0CBUcLbLWjZezur4lMMc5cz6ozHhzCALoIenv8JjFwL6U4fooMqfs
 
     services:
       headless:

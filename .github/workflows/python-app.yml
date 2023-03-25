@@ -41,11 +41,10 @@ jobs:
       with:
         name: test-reports
         path: test-reports
-    - name: Discord notification
-      uses: sarisia/actions-status-discord@v1
+    - uses: sarisia/actions-status-discord@v1
       if: always()
       with:
-        webhook: https://discord.com/api/webhooks/1089321172526698566/mSGNROk1kV-NI4a0CBUcLbLWjZezur4lMMc5cz6ozHhzCALoIenv8JjFwL6U4fooMqfs
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
     services:
       headless:

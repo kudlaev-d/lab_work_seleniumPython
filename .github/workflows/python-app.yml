@@ -36,6 +36,7 @@ jobs:
         NETWORK: good
         SELENIUM_DRIVER_KIND: remote
         WINDOW_RESOLUTION: max
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     - name: Upload test reports
       uses: actions/upload-artifact@v3
       with:
@@ -44,7 +45,7 @@ jobs:
     - uses: sarisia/actions-status-discord@v1
       if: always()
       with:
-        webhook: ${{ DISCORD_WEBHOOK }}
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
     services:
       headless:

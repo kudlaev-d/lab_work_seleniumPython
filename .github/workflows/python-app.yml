@@ -61,7 +61,9 @@ jobs:
         with:
           github-token: ${{ secrets.REPOSITORY_TOKEN }}
           discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: '${{ github.workflow }}: {{STATUS}}'
+          avatar-url: 'https://octodex.github.com/images/justicetocat.jpg'
+          title: 'Tests: {{STATUS}}'
+          include-details: 'true'
           color-success: '#4287f5'
           color-failure: 'eb4034'
           color-cancelled: '0x42daf5'

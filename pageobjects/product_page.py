@@ -116,6 +116,7 @@ class ProductPage(BasePage):
 
     def is_successfully_added(self) -> bool:
         """Если не найден алерт об успешном добавлении (к сравнению/в корзину), то отвалится по тайм-ауту. Иначе True"""
+        self.wait.until(ec.presence_of_element_located((By.CLASS_NAME, 'alert-dismissible')))
         alert: bool = self.wait.until(ec.text_to_be_present_in_element(
             (By.CLASS_NAME, 'alert-dismissible'), 'Success: You have added'))
         return alert

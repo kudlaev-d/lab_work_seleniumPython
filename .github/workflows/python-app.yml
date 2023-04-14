@@ -43,7 +43,6 @@ jobs:
         name: test-reports
         path: test-reports
     - name: Run parsing results
-      uses: actions/checkout@v2
       with:
         path: /parse_tests_results.py
       run: python parse_tests_results.py /test-reports/report.html

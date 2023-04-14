@@ -42,6 +42,19 @@ jobs:
       with:
         name: test-reports
         path: test-reports
+      steps:
+        - name: Send notification to Discord
+          uses: appleboy/discord-action@master
+          with:
+            webhook_id: ${{ secrets.DISCORD_WEBHOOK }}
+            webhook_token: ${{ secrets.REPOSITORY_TOKEN }}
+            color: "#8b9b9c"
+            username: "GitHub Bot"
+            message: |
+              Tests started by 👤 ${{ github.actor }}
+              From `${{ github.head_ref }}` to `${{ github.base_ref }}`
+              Event `${{ github.event_name }}`
+              PR ${{ github.event.number }}: ${{ github.event.pull_request.url }}
 
     services:
       headless:
@@ -55,15 +68,3 @@ jobs:
       - build
     if: ${{ always() }}
 
-    steps:
-      - name: Notify
-        uses: nobrayner/discord-webhook@v1
-        with:
-          github-token: ${{ secrets.REPOSITORY_TOKEN }}
-          discord-webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          avatar-url: 'https://octodex.github.com/images/justicetocat.jpg'
-          title: 'Tests: {{STATUS}}'
-          include-details: 'true'
-          color-success: '#4287f5'
-          color-failure: 'eb4034'
-          color-cancelled: '0x42daf5'

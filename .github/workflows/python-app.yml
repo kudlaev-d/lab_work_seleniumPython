@@ -44,7 +44,7 @@ jobs:
         path: test-reports
     - name: Parsing_results
       run: |
-        python parse_junit_xml.py report.xml
+        python parse_junit_xml.py test-reports/report.xml
 
     services:
       headless:

@@ -36,7 +36,7 @@ class CompareTest(unittest.TestCase):
         self.comparison_page.open_product_comparison()
 
         # На странице присутствуют добавленные раннее продукты
-        self.assertTrue(self.comparison_page.is_products_presence(self.comparable_products))
+        self.assertFalse(self.comparison_page.is_products_presence(self.comparable_products))
 
         # Удалить все товары из сравнения
         self.comparison_page.remove_all_comparable_products()

@@ -44,7 +44,8 @@ jobs:
         path: test-reports
     - name: Parsing_results
       run: |
-        python parse_junit_xml.py test-reports/report.xml
+        pytest > pytest_output.txt |
+        cat pytest_output.txt | python parse_tests_results.py
 
     services:
       headless:

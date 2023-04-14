@@ -67,6 +67,8 @@ class ProductPage(BasePage):
         info: Dict = {}
         for li in li_info_product:
             item: List[str] = li.text.split(': ')
+            if len(item) == 1:
+                item: List[str] = li.text.split(':')
             info[item[0]] = f'{item[1]}'
 
         # Создаем типизированный словарь
